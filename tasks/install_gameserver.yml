@@ -1,0 +1,54 @@
+---
+# install gameserver
+- block:
+  - name: "Set {{ gameserver }} config variable"
+    set_fact:
+      gameserver_config: '{{ linuxgsm_gameserver_config[gameserver] }}'
+  - name: "Download {{ gameserver }}"
+    command:
+      cmd: "{{ linuxgsm_home }}/{{ linuxgsm_bin }} {{ gameserver }}"
+    args:
+      chdir: "{{ linuxgsm_home }}"
+      creates: "{{ linuxgsm_home }}/{{ gameserver }}"
+  - name: "Install {{ gameserver }}"
+    command:
+      cmd: "{{ linuxgsm_home }}/{{ gameserver }} auto-install"
+    args:
+      chdir: "{{ linuxgsm_home }}"
+  - name: "Configure {{ gameserver }} instance"
+    template:
+      src: "gameserver.cfg.j2"
+      dest: "{{ linuxgsm_home }}/lgsm/config-lgsm/{{ gameserver }}/{{ gameserver }}.cfg"
+  - name: "Run additional commands on {{ gameserver }}"
+    command:
+      cmd: "{{ linuxgsm_home }}/{{ gameserver }} {{ item }}"
+    args:
+      chdir: "{{ linuxgsm_home }}"
+    with_items: "{{ gameserver_config['additional_commands'] | default([]) }}"
+  - name: "Include {{ gameserver }} specific tasks"
+    include_tasks: "{{ gameserver }}.yml"
+  become: true
+  become_user: "{{ linuxgsm_user }}"
+- name: "Configure systemd service"
+  template:
+    src: "gameserver.service.j2"
+    dest: "/etc/systemd/system/{{ gameserver }}.service"
+- name: "Enable systemd service"
+  systemd:
+    name: "{{ gameserver }}.service"
+    state: started
+    enabled: yes
+    daemon_reload: yes
+- name: "Restart {{ gameserver}}"
+  service:
+    name: "{{ gameserver }}"
+    state: restarted
+- name: "Enable firewall for {{ gameserver }}"
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items: "{{ gameserver_config['firewall'] }}"
+  when: gameserver_config['firewall'] is iterable
+  notify: firewalld reload
+

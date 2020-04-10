@@ -1,2 +1,28 @@
 ---
 # defaults file for linuxgsm
+linuxgsm_user: linuxgsm
+linuxgsm_home: '/srv/linuxgsm'
+linuxgsm_bin: 'linuxgsm.sh'
+linuxgsm_url: 'https://{{ linuxgsm_bin }}'
+linuxgsm_dependencies:
+ - epel-release
+ - jq
+ - glibc.i686
+ - libstdc++.i686
+linuxgsm_gameservers:
+ - csgoserver
+linuxgsm_gameserver_defaults:
+  csgoserver:
+    firewall:
+     - '27015/tcp'
+     - '27015/udp'
+     - '27020/udp'
+     - '27005/udp'
+    additional_commands:
+     - update
+    gameserver_config:
+      gslt: "{{ srcds_gslt | default('') }}"
+      discordalert: '{{ "on" if discord_webhook is defined else "off" }}'
+      discordwebhook: '{{ discord_webhook | default(None) }}'
+    csgoserver_config:
+linuxgsm_gameserver_overrides:

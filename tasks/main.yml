@@ -1,2 +1,28 @@
 ---
 # tasks file for linuxgsm
+- name: "Install LinuxGSM dependencies"
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ linuxgsm_dependencies }}"
+- name: "Create server user"
+  user:
+    name: "{{ linuxgsm_user }}"
+    home: "{{ linuxgsm_home }}"
+    password: '!'
+- name: "Merge config overrides"
+  set_fact:
+    linuxgsm_gameserver_config: "{{ (linuxgsm_gameserver_defaults | combine(linuxgsm_gameserver_overrides, recursive=True)) if linuxgsm_gameserver_overrides is iterable else linuxgsm_gameserver_defaults }}"
+- name: "Download LinuxGSM"
+  get_url:
+    url: "{{ linuxgsm_url }}"
+    dest: "{{ linuxgsm_home }}/{{ linuxgsm_bin }}"
+    mode: '0755'
+  become: true
+  become_user: "{{ linuxgsm_user }}"
+- name: "Include configs"
+  include_tasks: install_gameserver.yml
+  with_items: "{{ linuxgsm_gameservers }}"
+  when: linuxgsm_gameservers is iterable
+  loop_control:
+    loop_var: gameserver

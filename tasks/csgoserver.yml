@@ -1,0 +1,7 @@
+---
+- set_fact:
+    csgoserver_config: '{{ gameserver_config["csgoserver_config"] }}'
+- name: "Configure source server"
+  template:
+    src: "csgoserver.cfg.j2"
+    dest: "{{ linuxgsm_home }}/serverfiles/csgo/cfg/csgoserver.cfg"

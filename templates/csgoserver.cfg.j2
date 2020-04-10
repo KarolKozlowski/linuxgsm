@@ -1,0 +1,91 @@
+// ************************************************************************** //
+//                                                                            //
+//     Counter-Strike: Global Offensive - server.cfg                          //
+//     Version 120719                                                         //
+//                                                                            //
+// ************************************************************************** //
+
+// .................................. Basic ................................. //
+
+// Hostname - Name of the server.
+hostname "{{ csgoserver_config['hostname'] | default(inventory_hostname)}}"
+
+// RCON - remote console password.
+rcon_password "{{ csgoserver_config['rcon_password'] | default('ADMINPASSWORD') }}"
+
+// Server pas:sword - for private servers.
+sv_password "{{ csgoserver_config['sv_password'] | default('') }}"
+
+// Email - Server admin email.
+// Example: sv_contact "email@example.com"
+sv_contact "{{ csgoserver_config['sv_contact'] | default('') }}"
+
+// LAN mode - Server is a LAN server; can't connect from the internet. VAC (Valve Anti-Cheat) is disabled in this mode.
+// Default: sv_lan 0
+sv_lan "{{ csgoserver_config['sv_lan'] | default('0') }}"
+
+// Cheats mode - Server is disabled to use cheats by default;Commands like noclip,god are disabled to be exploited by the players. VAC (Valve Anti-Cheat) is disabled in this mode when value is set to '1'.
+// Default: sv_cheats 0
+// Cheats ON: sv_cheats 1
+sv_cheats "{{ csgoserver_config['sv_cheats'] | default('0') }}"
+
+// Tags - Used to provide extra information to clients when they're browsing for servers. Separate tags with a comma.
+// Example: sv_tags "128-tick,deathmatch,dm,ffa,pistol,dust2"
+sv_tags "{{ csgoserver_config['sv_tags'] | default('') }}"
+
+// Region - The region of the world to report this server in.
+// Default: -1
+// 0 - US East, 1 - US West, 2 - South America, 3 - Europe, 4 - Asia, 5 - Australia, 6 - Middle East, 7 - Africa
+sv_region "{{ csgoserver_config['sv_region'] | default('-1') }}"
+
+// ............................. Server Logging ............................. //
+
+// Enable log - Enables logging to file, console, and udp < on | off >.
+// Recommended: log on
+log "{{ csgoserver_config['log'] | default('on') }}"
+
+// Log bans - Log server bans in the server logs.
+// Default: sv_logbans 1
+// Recommended: sv_logbans 1
+sv_logbans "{{ csgoserver_config['sv_logbans'] | default('1') }}"
+
+// Log echo - Display log information to the server console.
+// Default: sv_logecho 1
+// Recommended: sv_logecho 1
+sv_logecho "{{ csgoserver_config['sv_logecho'] | default('1') }}"
+
+// Log file - Log server information in the log file.
+// Default: sv_logfile 1
+// Recommended: sv_logfile 1
+sv_logfile "{{ csgoserver_config['sv_logfile'] | default('1') }}"
+
+// One file log - Log server information to only one file.
+// Default: sv_log_onefile 0
+// Recommended: sv_log_onefile 0
+sv_log_onefile "{{ csgoserver_config['sv_log_onefile'] | default('0') }}"
+
+// Server Hibernation
+sv_hibernate_when_empty "{{ csgoserver_config['sv_hibernate_when_empty'] | default('1') }}"
+sv_hibernate_ms "{{ csgoserver_config['sv_hibernate_ms'] | default('5') }}"
+
+// ............................. Server Query ............................. //
+// More info at: https://www.gametracker.com/games/csgo/forum.php?thread=91691
+host_name_store "{{ csgoserver_config['host_name_store'] | default('1') }}"
+host_info_show "{{ csgoserver_config['host_info_show'] | default('1') }}"
+host_players_show "{{ csgoserver_config['host_players_show'] | default('2') }}"
+
+// ................................ Ban List ................................ //
+
+// User ban - Server banlist based on user steam ID.
+// Recommended: exec banned_user.cfg
+exec banned_user.cfg
+
+// IP ban - Server banlist based on user IP.
+// Recommended: exec banned_ip.cfg
+exec banned_ip.cfg
+
+// Write ID - Writes a list of permanently-banned user IDs to banned_user.cfg.
+writeid
+
+// Write IP - Save the ban list to banned_ip.cfg.
+writeip

@@ -1,2 +1,6 @@
 ---
 # handlers file for linuxgsm
+- name: "firewalld reload"
+  command: 'firewall-cmd --reload'
+- name: "gameserver restart"
+  command: 'systemctl restart {{ gameserver }}.service'
