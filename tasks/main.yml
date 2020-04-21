@@ -10,6 +10,10 @@
     name: "{{ linuxgsm_user }}"
     home: "{{ linuxgsm_home }}"
     password: '!'
+- name: "Set propper permissions on home dir"
+  file:
+    path: "{{ linuxgsm_home }}"
+    mode: '0750'
 - name: "Merge config overrides"
   set_fact:
     linuxgsm_gameserver_config: "{{ (linuxgsm_gameserver_defaults | combine(linuxgsm_gameserver_overrides, recursive=True)) if linuxgsm_gameserver_overrides is iterable else linuxgsm_gameserver_defaults }}"

@@ -5,12 +5,13 @@ Wants=network-online.target
 
 [Service]
 Type=forking
-User={{ linuxgsm_user }}
-WorkingDirectory={{ linuxgsm_home }}
-ExecStart={{ linuxgsm_home }}/{{ gameserver }} start
-ExecStop={{ linuxgsm_home }}/{{ gameserver }} stop
+User={{ gameserver_user }}
+WorkingDirectory={{ gameserver_home }}
+ExecStart={{ gameserver_home }}/{{ gameserver }} start
+ExecStop={{ gameserver_home }}/{{ gameserver }} stop
 Restart=no
-RemainAfterExit=yes   #Assume that the service is running after main process exits with code 0
+#Assume that the service is running after main process exits with code 0
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

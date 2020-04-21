@@ -1,34 +1,55 @@
 ---
 # install gameserver
+- name: "Set {{ gameserver }} user variables"
+  set_fact:
+    gameserver_user: "{{ gameserver }}"
+    gameserver_home: "{{ linuxgsm_home }}-{{ gameserver }}"
+- name: "Create {{ gameserver }} user"
+  user:
+    name: "{{ gameserver }}"
+    group: "{{ linuxgsm_user }}"
+    home: "{{ gameserver_home }}"
+    password: '!'
 - block:
+  - name: "Copy LinuxGSM bootstrap"
+    copy:
+      src: "{{ linuxgsm_home }}/{{ linuxgsm_bin }}"
+      dest: "{{ gameserver_home }}/{{ linuxgsm_bin }}"
+      owner: "{{ gameserver }}"
+      mode: 0755
+      remote_src: true
   - name: "Set {{ gameserver }} config variable"
     set_fact:
-      gameserver_config: '{{ linuxgsm_gameserver_config[gameserver] }}'
+      gameserver_config: '{{ linuxgsm_gameserver_config[gameserver] | default({}) }}'
   - name: "Download {{ gameserver }}"
     command:
-      cmd: "{{ linuxgsm_home }}/{{ linuxgsm_bin }} {{ gameserver }}"
+      cmd: "{{ gameserver_home }}/{{ linuxgsm_bin }} {{ gameserver }}"
     args:
-      chdir: "{{ linuxgsm_home }}"
-      creates: "{{ linuxgsm_home }}/{{ gameserver }}"
+      chdir: "{{ gameserver_home }}"
+      creates: "{{ gameserver_home }}/{{ gameserver }}"
   - name: "Install {{ gameserver }}"
     command:
-      cmd: "{{ linuxgsm_home }}/{{ gameserver }} auto-install"
+      cmd: "{{ gameserver_home }}/{{ gameserver }} auto-install"
     args:
-      chdir: "{{ linuxgsm_home }}"
+      chdir: "{{ gameserver_home }}"
   - name: "Configure {{ gameserver }} instance"
     template:
       src: "gameserver.cfg.j2"
-      dest: "{{ linuxgsm_home }}/lgsm/config-lgsm/{{ gameserver }}/{{ gameserver }}.cfg"
+      dest: "{{ gameserver_home }}/lgsm/config-lgsm/{{ gameserver }}/{{ gameserver }}.cfg"
   - name: "Run additional commands on {{ gameserver }}"
     command:
-      cmd: "{{ linuxgsm_home }}/{{ gameserver }} {{ item }}"
+      cmd: "{{ gameserver_home }}/{{ gameserver }} {{ item }}"
     args:
-      chdir: "{{ linuxgsm_home }}"
+      chdir: "{{ gameserver_home }}"
     with_items: "{{ gameserver_config['additional_commands'] | default([]) }}"
   - name: "Include {{ gameserver }} specific tasks"
     include_tasks: "{{ gameserver }}.yml"
+    with_first_found:
+     - files:
+        - "{{ gameserver }}.yml"
+       skip: true
   become: true
-  become_user: "{{ linuxgsm_user }}"
+  become_user: "{{ gameserver_user }}"
 - name: "Configure systemd service"
   template:
     src: "gameserver.service.j2"
@@ -48,7 +69,7 @@
     port: "{{ item }}"
     permanent: yes
     state: enabled
-  with_items: "{{ gameserver_config['firewall'] }}"
+  with_items: "{{ gameserver_config['firewall'] | default([]) }}"
   when: gameserver_config['firewall'] is iterable
   notify: firewalld reload
 
