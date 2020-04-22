@@ -12,14 +12,18 @@ linuxgsm_dependencies:
 linuxgsm_gameservers:
  - csgoserver
 linuxgsm_gameserver_defaults:
+  csserver:
+    firewall:
+      - '27015/tcp'
+      - '27015/udp'
   csgoserver:
     firewall:
-     - '27015/tcp'
-     - '27015/udp'
-     - '27020/udp'
-     - '27005/udp'
+      - '27015/tcp'
+      - '27015/udp'
+      - '27020/udp'
+      - '27005/udp'
     additional_commands:
-     - update
+      - update
     gameserver_config:
       gslt: "{{ srcds_gslt | default('') }}"
       discordalert: '{{ "on" if discord_webhook is defined else "off" }}'
