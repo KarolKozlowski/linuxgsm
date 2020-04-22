@@ -1,0 +1,7 @@
+---
+- set_fact:
+    csserver_config: '{{ gameserver_config["csserver_config"] | default({}) }}'
+- name: "Configure source server"
+  template:
+    src: "csserver.cfg.j2"
+    dest: "{{ gameserver_home }}/serverfiles/cstrike/csserver.cfg"

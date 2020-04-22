@@ -1,0 +1,35 @@
+// Hostname for server.
+hostname "{{ csserver_config['hostname'] | default(inventory_hostname)}}"
+
+// RCON - remote console password.
+rcon_password "{{ csserver_config['rcon_password'] | default('ADMINPASSWORD') }}"
+
+// Server password - for private servers.
+sv_password "{{ csserver_config['sv_password'] | default('') }}"
+
+// Server Logging
+log {{ csserver_config['log'] | default('on') }}
+sv_logbans {{ csserver_config['sv_logbans'] | default('1') }}
+sv_logecho {{ csserver_config['sv_logecho'] | default('1') }}
+sv_logfile {{ csserver_config['sv_logfile'] | default('1') }}
+sv_log_onefile {{ csserver_config['sv_log_onefile'] | default('0') }}
+
+// disable autoaim
+sv_aim {{ csserver_config['sv_aim'] | default('1') }}
+
+// disable clients' ability to pause the server
+pausable {{ csserver_config['pausable'] | default('0') }}
+
+// maximum client movement speed
+sv_maxspeed {{ csserver_config['sv_maxspeed'] | default('320') }}
+
+// 20 minute timelimit
+mp_timelimit 20 {{ csserver_config['mp_timelimit'] | default('20') }}
+
+// cheats off
+sv_cheats {{ csserver_config['sv_cheats'] | default('0') }}
+
+// load ban files
+exec listip.cfg
+exec banned.cfg
+
