@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    csgoserver_config: '{{ gameserver_config["csgoserver_config"] }}'
+    csgoserver_config: '{{ gameserver_config["csgoserver_config"] | default({}) }}'
 - name: "Configure source server"
   template:
     src: "csgoserver.cfg.j2"
