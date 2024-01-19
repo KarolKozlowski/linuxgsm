@@ -24,7 +24,7 @@ pausable {{ csserver_config['pausable'] | default('0') }}
 sv_maxspeed {{ csserver_config['sv_maxspeed'] | default('320') }}
 
 // 20 minute timelimit
-mp_timelimit 20 {{ csserver_config['mp_timelimit'] | default('20') }}
+mp_timelimit {{ csserver_config['mp_timelimit'] | default('20') }}
 
 // cheats off
 sv_cheats {{ csserver_config['sv_cheats'] | default('0') }}
